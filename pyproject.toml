@@ -1,0 +1,46 @@
+[project]
+name = "notes-api"
+version = "0.1.0"
+description = "Notes REST API: FastAPI + SQLAlchemy + SQLite"
+readme = "README.md"
+authors = [
+    { name = "YSYSYS033", email = "2418901903@qq.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.165.0",
+    "sqlalchemy>=2.1.9",
+    "uvicorn>=0.54.0",
+]
+
+[project.scripts]
+notes-api = "notes_api:main"
+
+[build-system]
+requires = ["uv_build>=0.13.8,<0.14.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "httpx2>=2.16.2",
+    "pytest>=9.2.0",
+    "ruff>=0.17.6",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["notes_api"]
+
+[tool.ruff.lint.per-file-ignores]
+# FastAPI 的依赖注入写法就是 Depends() 放在参数默认值里，这是官方推荐模式
+"src/notes_api/routers/*.py" = ["B008"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
