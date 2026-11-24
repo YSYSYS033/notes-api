@@ -15,6 +15,7 @@ def test_create_note(client: TestClient) -> None:
     assert data["title"] == "第一条"
     assert data["content"] == "内容"
     assert "created_at" in data
+    assert data["updated_at"] is not None
 
 
 def test_list_notes(client: TestClient) -> None:
