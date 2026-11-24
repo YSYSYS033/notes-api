@@ -18,10 +18,31 @@
 ```powershell
 cd D:\deepseek\agent-portfolio\notes-api
 uv sync
+uv run alembic upgrade head          # 建表/升级数据库（第一次必须执行）
 uv run uvicorn notes_api.main:app --reload --port 8000
 ```
 
 打开 http://127.0.0.1:8000/docs 可以直接在浏览器里试所有接口。
+
+## 数据库迁移（Alembic）
+
+改表结构**不要手改数据库**，走迁移：
+
+```powershell
+# 1. 改模型（models.py），然后生成迁移脚本
+uv run alembic revision --autogenerate -m "add tags column"
+
+# 2. 看一眼生成的脚本，确认没问题
+#    migrations/versions/xxxx_add_tags_column.py
+
+# 3. 执行
+uv run alembic upgrade head
+
+# 常用命令
+uv run alembic current      # 当前版本
+uv run alembic history      # 迁移历史
+uv run alembic downgrade -1 # 回滚上一个版本
+```
 
 ## 接口
 
@@ -72,4 +93,4 @@ uv run ruff format .   # 自动格式化
 1. **三层分离**：`models`（数据库表）↔ `schemas`（接口出入参）↔ `routers`（业务逻辑）。数据库结构变了不会直接影响接口契约。
 2. **依赖注入**：`get_db()` 每个请求给一个 Session，请求结束自动关闭；测试里用 `dependency_overrides` 换成临时数据库。
 3. **状态码语义**：创建用 201，删除用 204，查不到用 404，参数不合法交给 Pydantic 返回 422。
-4. **建表用 `create_all`**：教学阶段够用；下一阶段会换成 Alembic 迁移（改表结构不丢数据）。
+4. **建表用 Alembic 迁移**：`create_all` 只会建不存在的表，改结构时无能为力；迁移脚本能记录「从旧结构到新结构」的每一步，并且可以回滚。
