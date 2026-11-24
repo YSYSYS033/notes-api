@@ -29,7 +29,8 @@ uv run uvicorn notes_api.main:app --reload --port 8000
 |---|---|---|---|
 | GET | `/health` | 健康检查 | 200 |
 | POST | `/notes` | 新建笔记 | 201 |
-| GET | `/notes` | 列出所有笔记 | 200 |
+| GET | `/notes?skip=0&limit=20` | 分页列出（`limit` 范围 1～100） | 200 / 422 |
+| GET | `/notes/search?q=关键词` | 按标题模糊搜索（不区分大小写） | 200 / 422 |
 | GET | `/notes/{id}` | 查单条 | 200 / 404 |
 | PATCH | `/notes/{id}` | 部分更新 | 200 / 404 |
 | DELETE | `/notes/{id}` | 删除 | 204 / 404 |
